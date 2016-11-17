@@ -16,6 +16,7 @@ DIR_NAME = MODULE_NAME = sys.argv[1]
 modulesInAll = [MODULE_NAME]
 FINISHEDFILE = "pythonFinished.txt"
 PREPATH = "./component_src/"
+MODULEPATH = "./" + MODULE_NAME + '/' + MODULE_NAME + '/'
 #进入工作目录
 def readyForWork():
     os.chdir(PREPATH)
@@ -58,44 +59,37 @@ def zipModule(module_name):
     # shutil.move(module_name + ".zip","./" + module_name + "/" + module_name + ".zip")
     print "------module zip end------"
 
-#json文件合并
 def mergeJson(module_name):
-    option = {
-        "properties": {
-            "*": {
-                "mergeStrategy": "append"
-            }
-        }
-    }
-    merger = Merger(option)
-    # result = "./" + module_name + '/package.json'
-    # for startdir in modulesInAll :
-    #     jsonFilePath = file ("./" + startdir + '/package.json')
-    #     result = merger.merge(result, jsonFilePath)
-    # pprint(result, width=40)
-    # print "----------json merge end ---------"
-
+    result = {}
     #找到所有的json文件
-    result = {
-        "x" : "p"
-    }
+    output = {}
     for root, dirs, files in os.walk("./"):
         for file in files:
             if file.endswith(".json"):
-                print(os.path.join(root, file))
-                with open(os.path.join(root, file), "rb") as infile:
-                    result = merger.merge(result, json.load(infile))
-                    print "result ===================="
-                    print result 
-                    print "--------------------------"
-    with open("merged_file.json", "wb") as outfile:
-         json.dump(result, outfile)
+                # print 11111111111
+                # print(os.path.join(root, file))
+                infile = open(os.path.join(root, file), "rb")
+                result = dict(result.items() + list(json.load(infile)["dependencies"].items()))
+                output["dependencies"] = result
+                # print "============"
+                # print output
+    jsonFile = open( "./" + module_name + "/package.json", "r")
+    # print os.getcwd()
+    data = json.load(jsonFile)
+    jsonFile.close()
+    data["dependencies"] = dict(output["dependencies"].items() + data["dependencies"].items())
+
+    jsonFile = open("./" + module_name  + "/package.json", "w+")
+    jsonFile.write(json.dumps(data))
+    jsonFile.close()
 
 #读取本地依赖模块
 def readJson(module_name):
     jsonFilePath = file ("./" + module_name + '/package.json')
     packJson = json.load(jsonFilePath)
     path = packJson['ownModuleDownLoadPath']
+    print path 
+    print "path"
     for moduleName in packJson['ownModuleDependencies']:
         modulesInAll.append(path + moduleName)
         getModule(moduleName)
