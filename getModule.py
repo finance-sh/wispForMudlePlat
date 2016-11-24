@@ -29,7 +29,7 @@ def readyForWork():
         shutil.rmtree(MODULE_NAME)
     os.mkdir(MODULE_NAME)
     os.chdir(MODULE_NAME)
-
+    print "==readyForWork End==="
 #获取git代码
 def getModule(module_name):
     oldModulesDepends = modulesDepends
@@ -55,6 +55,7 @@ def moveDependModulePath(module_name):
     for startdir in modulesDepends:
         shutil.move(startdir + '/' + startdir, MODULE_NAME)
         shutil.rmtree(startdir)
+    print "==moveDependModulePath End==="
 
 #模块压缩
 def zipModule(module_name):
@@ -91,6 +92,7 @@ def mergeJson(module_name):
     jsonFile = open("./" + module_name  + "/package.json", "w+")
     jsonFile.write(json.dumps(data))
     jsonFile.close()
+    print "------mergeJson end------"
 
 #读取本地依赖模块
 def readJson(module_name):
@@ -104,15 +106,13 @@ def readJson(module_name):
         #暂时不用配置文件ownModuleDownLoadPath
         #newModuleDependPath = path + moduleName
         newModuleDependPath = moduleName
-        print "==modulesDepends==="
-        print modulesDepends
-        print "==newModuleDependPath==="
-        print newModuleDependPath
         if newModuleDependPath not in modulesDepends:
+            print "==== loading module " + newModuleDependPath + "===="
             modulesInAll.append(newModuleDependPath)
             modulesDepends.append(newModuleDependPath)
             getModule(newModuleDependPath)
             # shutil.move(module_name, newModuleDependPath)
+    print "=== readJson END ===="
 
 #下载依赖文件
 def loadDependsFilesAll(module_name):
@@ -127,8 +127,6 @@ def iAmEnd():
     f.close()
 
 def main():
-    FIRSTTIMEFLAG = 1
-    print FIRSTTIMEFLAG
     readyForWork()
     loadDependsFilesAll(MODULE_NAME)
     mergeJson(MODULE_NAME)
