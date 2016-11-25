@@ -33,7 +33,7 @@ def readyForWork():
 #获取git代码
 def getModule(module_name):
     oldModulesDepends = modulesDepends
-    REMOTE_URL = "https://github.com/finance-sh/" + module_name + ".git"
+    REMOTE_URL = "git@github.com:finance-sh/" + module_name + ".git"
     moduleDownLoadPath = module_name
     if os.path.isdir(moduleDownLoadPath):
         shutil.rmtree(moduleDownLoadPath)
