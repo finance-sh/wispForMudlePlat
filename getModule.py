@@ -15,15 +15,15 @@ sys.setdefaultencoding('utf8')
 DIR_NAME = MODULE_NAME = sys.argv[1]
 modulesInAll = [MODULE_NAME]
 modulesDepends = []
-FINISHEDFILE = "pythonFinished.txt"
+FINISHEDFILE = "moduleFamily.json"
 PREPATH = "./component_src/"
 MODULEPATH = "./" + MODULE_NAME + '/' + MODULE_NAME + '/'
 TMPDEPENDPATH = "depends"
 #进入工作目录
 def readyForWork(): 
     os.chdir(PREPATH)
-    if os.path.exists(FINISHEDFILE):
-        os.remove(FINISHEDFILE)
+    # if os.path.exists(FINISHEDFILE):
+    #     os.remove(FINISHEDFILE)
         
     if os.path.isdir(MODULE_NAME):
         shutil.rmtree(MODULE_NAME)
@@ -34,6 +34,8 @@ def readyForWork():
 def getModule(module_name):
     oldModulesDepends = modulesDepends
     REMOTE_URL = "git@github.com:finance-sh/" + module_name + ".git"
+
+    # REMOTE_URL = "https://github.com/finance-sh/" + module_name + ".git"
     moduleDownLoadPath = module_name
     if os.path.isdir(moduleDownLoadPath):
         shutil.rmtree(moduleDownLoadPath)
@@ -121,10 +123,15 @@ def loadDependsFilesAll(module_name):
 
 #结束脚本通知
 def iAmEnd():
-    os.chdir("../")
-    f = file(FINISHEDFILE,"w+")
-    f.writelines("end")
-    f.close()
+    moduleFamilyFile = file('../../component_src/' +  FINISHEDFILE)
+    moduleJsonOld = json.load(moduleFamilyFile)
+    modulesJson = {}
+    for modules in modulesInAll:
+        modulesJson[modules] = '1'
+    modulesJson = dict(moduleJsonOld.items() + modulesJson.items())
+    jStr = json.dumps(modulesJson , ensure_ascii=False)
+    with open('../../component_src/' +  FINISHEDFILE , "w") as f:
+        f.write(jStr)
 
 def main():
     readyForWork()
