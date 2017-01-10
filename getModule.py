@@ -5,6 +5,8 @@ import git, os, shutil
 import os
 import zipfile
 import json
+import urllib
+import urllib2
 from pprint import pprint
 from jsonmerge import Merger
 import glob
@@ -33,17 +35,26 @@ def readyForWork():
 #获取git代码
 def getModule(module_name):
     oldModulesDepends = modulesDepends
-    REMOTE_URL = "git@github.com:finance-sh/" + module_name + ".git"
-
-    # REMOTE_URL = "https://github.com/finance-sh/" + module_name + ".git"
+    #REMOTE_URL = "git@github.com:finance-sh/" + module_name + ".git" #for 服务器
+    REMOTE_URL = "https://github.com/finance-sh/" + module_name + ".git" #for 个人
     moduleDownLoadPath = module_name
     if os.path.isdir(moduleDownLoadPath):
         shutil.rmtree(moduleDownLoadPath)
-    os.mkdir(moduleDownLoadPath)
-    repo = git.Repo.init(module_name)
-    origin = repo.create_remote('origin' , REMOTE_URL)
-    origin.fetch()
-    origin.pull(origin.refs[0].remote_head)
+    # os.mkdir(moduleDownLoadPath) # for download by git
+    #直接拉取zip文件
+    url = 'https://github.com/finance-sh/' + module_name + '/archive/master.zip'
+    zipName = module_name + '.zip'
+    urllib.urlretrieve(url, zipName)
+    with zipfile.ZipFile(zipName) as zf:
+        zf.extractall('./')
+    os.rename(module_name + '-master', module_name)
+    os.remove(zipName)
+    #git 方式拉代码，太慢了
+    # repo = git.Repo.init(module_name)
+    # origin = repo.create_remote('origin' , REMOTE_URL)
+    # origin.fetch()
+    # origin.pull(origin.refs[0].remote_head)
+
     readJson(module_name)
     print "------getModule " + module_name + " Done--------"
 
