@@ -20,11 +20,11 @@ PREPATH = "./component_src/"
 MODULEPATH = "./" + MODULE_NAME + '/' + MODULE_NAME + '/'
 TMPDEPENDPATH = "depends"
 #进入工作目录
-def readyForWork(): 
+def readyForWork():
     os.chdir(PREPATH)
     # if os.path.exists(FINISHEDFILE):
     #     os.remove(FINISHEDFILE)
-        
+
     if os.path.isdir(MODULE_NAME):
         shutil.rmtree(MODULE_NAME)
     os.mkdir(MODULE_NAME)
@@ -123,14 +123,18 @@ def loadDependsFilesAll(module_name):
 
 #结束脚本通知
 def iAmEnd():
-    moduleFamilyFile = file('../../component_src/' +  FINISHEDFILE)
-    moduleJsonOld = json.load(moduleFamilyFile)
+    #print os.getcwd()
+    moduleFamilyFile = file('../' +  FINISHEDFILE)
+    if(moduleFamilyFile):
+        moduleJsonOld = json.load(moduleFamilyFile)
+    else:
+        moduleJsonOld = {}
     modulesJson = {}
     for modules in modulesInAll:
         modulesJson[modules] = '1'
     modulesJson = dict(moduleJsonOld.items() + modulesJson.items())
     jStr = json.dumps(modulesJson , ensure_ascii=False)
-    with open('../../component_src/' +  FINISHEDFILE , "w") as f:
+    with open('../' +  FINISHEDFILE , "w") as f:
         f.write(jStr)
 
 def main():
