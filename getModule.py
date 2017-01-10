@@ -6,7 +6,6 @@ import os
 import zipfile
 import json
 import urllib
-import urllib2
 from pprint import pprint
 from jsonmerge import Merger
 import glob
@@ -43,8 +42,9 @@ def getModule(module_name):
     # os.mkdir(moduleDownLoadPath) # for download by git
     #直接拉取zip文件
     url = 'https://github.com/finance-sh/' + module_name + '/archive/master.zip'
-    zipName = module_name + '.zip'
-    urllib.urlretrieve(url, zipName)
+    zipName = 'master' + '.zip'
+    os.system('wget --no-check-certificate ' + url)
+    # urllib.urlretrieve(url, zipName)
     with zipfile.ZipFile(zipName) as zf:
         zf.extractall('./')
     os.rename(module_name + '-master', module_name)
@@ -93,7 +93,8 @@ def mergeJson(module_name):
                 # print(os.path.join(root, file))
                 infile = open(os.path.join(root, file), "rb")
                 result = dict(result.items() + list(json.load(infile)["dependencies"].items()))
-                output["dependencies"] = result
+                if (result):
+                    output["dependencies"] = result
                 # print "============"
                 # print output
     jsonFile = open( "./" + module_name + "/package.json", "r")
@@ -112,20 +113,23 @@ def readJson(module_name):
     oldModulesDepends = modulesDepends
     jsonFilePath = file ("./" + module_name + '/package.json')
     packJson = json.load(jsonFilePath)
-    path = packJson['ownModuleDownLoadPath']
-    print path
-    print "path"
-    for moduleName in packJson['ownModuleDependencies']:
-        #暂时不用配置文件ownModuleDownLoadPath
-        #newModuleDependPath = path + moduleName
-        newModuleDependPath = moduleName
-        if newModuleDependPath not in modulesDepends:
-            print "==== loading module " + newModuleDependPath + "===="
-            modulesInAll.append(newModuleDependPath)
-            modulesDepends.append(newModuleDependPath)
-            getModule(newModuleDependPath)
-            # shutil.move(module_name, newModuleDependPath)
-    print "=== readJson END ===="
+    if (packJson.has_key('ownModuleDownLoadPath')):
+        path = packJson['ownModuleDownLoadPath']
+        print path
+        print "path"
+        if (packJson.has_key('ownModuleDependencies')):
+            for moduleName in packJson['ownModuleDependencies']:
+                if (moduleName):
+                    #暂时不用配置文件ownModuleDownLoadPath
+                    #newModuleDependPath = path + moduleName
+                    newModuleDependPath = moduleName
+                    if newModuleDependPath not in modulesDepends:
+                        print "==== loading module " + newModuleDependPath + "===="
+                        modulesInAll.append(newModuleDependPath)
+                        modulesDepends.append(newModuleDependPath)
+                        getModule(newModuleDependPath)
+                        # shutil.move(module_name, newModuleDependPath)
+        print "=== readJson END ===="
 
 #下载依赖文件
 def loadDependsFilesAll(module_name):
