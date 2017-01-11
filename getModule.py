@@ -103,7 +103,8 @@ def mergeJson(module_name):
     # print os.getcwd()
     data = json.load(jsonFile)
     jsonFile.close()
-    data["dependencies"] = dict(output["dependencies"].items() + data["dependencies"].items())
+    if (data.has_key('dependencies')):
+        data['dependencies'] = dict(output['dependencies'].items() + data['dependencies'].items())
 
     jsonFile = open("./" + module_name  + "/package.json", "w+")
     jsonFile.write(json.dumps(data))
