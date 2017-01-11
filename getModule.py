@@ -92,11 +92,13 @@ def mergeJson(module_name):
                 # print 11111111111
                 # print(os.path.join(root, file))
                 infile = open(os.path.join(root, file), "rb")
-                result = dict(result.items() + list(json.load(infile)["dependencies"].items()))
-                if (result):
-                    output["dependencies"] = result
-                # print "============"
-                # print output
+                re = json.load(infile)
+                if (re.has_key('dependencies')):
+                    result = dict(result.items() + list(re["dependencies"].items()))
+                    if (result):
+                        output["dependencies"] = result
+                    # print "============"
+                    # print output
     jsonFile = open( "./" + module_name + "/package.json", "r")
     # print os.getcwd()
     data = json.load(jsonFile)
