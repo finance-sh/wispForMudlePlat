@@ -14,6 +14,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 DIR_NAME = MODULE_NAME = sys.argv[1]
+URL_DOWNLOAD = sys.argv[2]
 modulesInAll = [MODULE_NAME]
 modulesDepends = []
 FINISHEDFILE = "moduleFamily.json"
@@ -34,14 +35,14 @@ def readyForWork():
 #获取git代码
 def getModule(module_name):
     oldModulesDepends = modulesDepends
-    #REMOTE_URL = "git@github.com:finance-sh/" + module_name + ".git" #for 服务器
-    REMOTE_URL = "https://github.com/finance-sh/" + module_name + ".git" #for 个人
+    #REMOTE_URL = "git@github.com:" + URL_DOWNLOAD + ".git" #for 服务器
+    REMOTE_URL = "https://github.com/" + URL_DOWNLOAD + ".git" #for 个人
     moduleDownLoadPath = module_name
     if os.path.isdir(moduleDownLoadPath):
         shutil.rmtree(moduleDownLoadPath)
     # os.mkdir(moduleDownLoadPath) # for download by git
     #直接拉取zip文件
-    url = 'https://github.com/finance-sh/' + module_name + '/archive/master.zip'
+    url = 'https://github.com/' + URL_DOWNLOAD + '/archive/master.zip'
     zipName = 'master' + '.zip'
     os.system('wget --no-check-certificate ' + url)
     # urllib.urlretrieve(url, zipName)
