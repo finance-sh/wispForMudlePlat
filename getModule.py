@@ -1,5 +1,6 @@
 # encoding=utf8
 import sys
+import re
 import subprocess
 import git, os, shutil
 import os
@@ -13,8 +14,8 @@ import glob
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-DIR_NAME = MODULE_NAME = sys.argv[1]
-URL_DOWNLOAD = sys.argv[2]
+URL_DOWNLOAD = sys.argv[1]
+DIR_NAME = MODULE_NAME = re.findall(r"/(.*)",URL_DOWNLOAD)[0]
 modulesInAll = [MODULE_NAME]
 modulesDepends = []
 FINISHEDFILE = "moduleFamily.json"
